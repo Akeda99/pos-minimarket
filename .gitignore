@@ -1,0 +1,22 @@
+# Maven
+target/
+
+# NetBeans
+nbproject/private/
+build/
+dist/
+nbbuild/
+.nb-gradle/
+
+# IntelliJ / VS Code / Eclipse (por si alguien usa otro)
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Compilados y SO
+*.class
+.DS_Store
+Thumbs.db
