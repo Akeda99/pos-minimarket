@@ -20,3 +20,7 @@ nbbuild/
 *.class
 .DS_Store
 Thumbs.db
+
+# Credenciales locales - NUNCA subir
+src/main/resources/config.properties
+config.properties

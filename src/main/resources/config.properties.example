@@ -1,0 +1,11 @@
+# ============================================================
+# Plantilla de configuracion de la base de datos.
+# Copia este archivo como "config.properties" (misma carpeta)
+# y coloca TUS credenciales de Oracle.
+#
+# IMPORTANTE: config.properties esta en .gitignore y NO se sube
+# al repositorio. Nunca subas tus credenciales reales.
+# ============================================================
+db.url=jdbc:oracle:thin:@localhost:1521:XE
+db.user=TU_USUARIO_ORACLE
+db.password=TU_CLAVE
