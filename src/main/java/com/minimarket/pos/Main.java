@@ -1,14 +1,12 @@
 package com.minimarket.pos;
-
-import com.minimarket.pos.vista.VentanaPrincipal;
+import com.minimarket.pos.vista.VentanaLogin;
 import javax.swing.SwingUtilities;
 
-/** Punto de entrada de la aplicacion. Responsable: Integrante 1-Ray Cardenas. */
 public class Main {
+    //Ahora con este cambio Iniciara desde la ventana login, pero se necesita
+    // que la base de datos ya este conectada con oracle, sino cuando se le de a login
+    // va a aparecer error porque no esta conectada a la base de datos y no hay usuario creados.
     public static void main(String[] args) {
-        // NOTA NO OLVIDAR: cuando el Integrante 3 suba su VentanaLogin, cambiar este arranque O INICIO
-        // para que la aplicacion inicie por el login deberia de iniciar por ahi. por ahora, abrimos
-        // directamente la ventana principal para probar si es que funciona la base o no.
-        SwingUtilities.invokeLater(() -> new VentanaPrincipal("ADMINISTRADOR").setVisible(true));
+        SwingUtilities.invokeLater(() -> new VentanaLogin().setVisible(true));
     }
 }
