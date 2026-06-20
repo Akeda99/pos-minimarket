@@ -2,14 +2,12 @@ package com.minimarket.pos.modelo;
 
 /**
  * Producto vendido por kilogramo (frutas, verduras, granos a granel).
- * precioBase representa el precio por kg; se aplica un margen del 25 %.
- * El total de la línea en la venta es calcularPrecioVenta() x cantidadKg.
+ * precioBase representa el precio por kg (precio de venta al publico).
+ * El total de la linea en la venta es calcularPrecioVenta() x cantidadKg.
  *
  * @author Integrante 2
  */
 public class ProductoPorPeso extends Producto {
-
-    private static final double MARGEN = 0.25;
 
     public ProductoPorPeso(int id, String codigoBarras, String nombre,
                            double precioPorKg, int stock, int idCategoria) {
@@ -20,8 +18,7 @@ public class ProductoPorPeso extends Producto {
 
     @Override
     public double calcularPrecioVenta() {
-        double precio = getPrecioBase() * (1 + MARGEN);
-        return Math.round(precio * 100.0) / 100.0;
+        return getPrecioBase();
     }
 
     @Override

@@ -3,8 +3,9 @@ package com.minimarket.pos.modelo;
 import java.time.LocalDate;
 
 /**
- * Producto con fecha de vencimiento (lácteos, embutidos, pan, etc.).
- * Aplica un margen del 20 %; si vence en <= 3 días se descuenta un 30 %.
+ * Producto con fecha de vencimiento (lacteos, embutidos, pan, etc.).
+ * Se vende al precio registrado. La fecha de vencimiento se usa para
+ * identificar productos vencidos o proximos a vencer en los reportes.
  *
  * @author Integrante 2
  */
@@ -12,9 +13,7 @@ public class ProductoPerecible extends Producto {
 
     private LocalDate fechaVencimiento;
 
-    private static final double MARGEN         = 0.20;
-    private static final double DESCUENTO_PROX = 0.30;
-    private static final int    DIAS_PROX_VENC = 3;
+    private static final int DIAS_PROX_VENC = 3;
 
     public ProductoPerecible(int id, String codigoBarras, String nombre,
                              double precioBase, int stock, int idCategoria,
@@ -27,11 +26,7 @@ public class ProductoPerecible extends Producto {
 
     @Override
     public double calcularPrecioVenta() {
-        double precio = getPrecioBase() * (1 + MARGEN);
-        if (estaProximoAVencer()) {
-            precio = precio * (1 - DESCUENTO_PROX);
-        }
-        return Math.round(precio * 100.0) / 100.0;
+        return getPrecioBase();
     }
 
     @Override
