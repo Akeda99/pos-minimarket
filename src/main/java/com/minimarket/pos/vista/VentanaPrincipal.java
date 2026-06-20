@@ -1,5 +1,6 @@
 package com.minimarket.pos.vista;
 
+import com.minimarket.pos.modelo.Usuario;
 import javax.swing.*;
 import java.beans.PropertyVetoException;
 
@@ -7,19 +8,19 @@ import java.beans.PropertyVetoException;
  * Ventana principal (MDI) que integra todos los modulos del sistema.
  * Responsable: Integrante 1.
  *
- * El menu se construye segun el rol del usuario que inicio sesion:
- *   - ADMINISTRADOR: ve todos los modulos (gestion de inventario, ventas,
- *     usuarios, categorias y reportes).
- *   - CAJERO: ve solo Ventas y la consulta de Inventario (sin poder editar).
+ * El menu se arma segun el rol del usuario que inicio sesion:
+ *   - ADMINISTRADOR: ve todos los modulos.
+ *   - CAJERO: ve solo Ventas y la consulta de Inventario.
+ * Ademas, cada venta se registra a nombre del usuario conectado.
  */
 public class VentanaPrincipal extends JFrame {
 
     private final JDesktopPane desktop = new JDesktopPane();
-    private final String rol;
+    private final Usuario usuario;
 
-    public VentanaPrincipal(String rol) {
-        this.rol = rol;
-        setTitle("Sistema POS Minimarket - [" + rol + "]");
+    public VentanaPrincipal(Usuario usuario) {
+        this.usuario = usuario;
+        setTitle("Sistema POS Minimarket - " + usuario.getNombre() + " [" + usuario.getRol() + "]");
         setSize(1000, 650);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -29,7 +30,7 @@ public class VentanaPrincipal extends JFrame {
 
     private JMenuBar crearMenu() {
         JMenuBar barra = new JMenuBar();
-        boolean esAdmin = "ADMINISTRADOR".equalsIgnoreCase(rol);
+        boolean esAdmin = "ADMINISTRADOR".equalsIgnoreCase(usuario.getRol());
 
         // --- Inventario: el administrador lo gestiona; el cajero solo lo consulta ---
         JMenu mInventario = new JMenu("Inventario");
@@ -43,10 +44,14 @@ public class VentanaPrincipal extends JFrame {
             mInventario.add(itConsultar);
         }
 
-        // --- Ventas: disponible para ambos roles ---
+        // --- Ventas: para ambos roles; la venta queda a nombre del usuario ---
         JMenu mVentas = new JMenu("Ventas");
         JMenuItem itVender = new JMenuItem("Registrar venta");
-        itVender.addActionListener(e -> abrir(new VentanaVenta()));                         // [I4] Leydi
+        itVender.addActionListener(e -> {
+            VentanaVenta ventaVenta = new VentanaVenta();
+            ventaVenta.setIdUsuario(usuario.getIdUsuario());                                // [I4] Leydi
+            abrir(ventaVenta);
+        });
         mVentas.add(itVender);
 
         barra.add(mInventario);
@@ -59,22 +64,43 @@ public class VentanaPrincipal extends JFrame {
             itUsuarios.addActionListener(e -> abrir(new VentanaUsuarios()));                // [I3] Nestor
             mUsuarios.add(itUsuarios);
 
-            JMenu mMaestros = new JMenu("Categorias");
+            JMenu mCategorias = new JMenu("Categorias");
             JMenuItem itCategorias = new JMenuItem("Ver Categorias");
-            itCategorias.addActionListener(e -> enDesarrollo("Categorias", "Integrante 5")); // [I5]
-            mMaestros.add(itCategorias);
+            itCategorias.addActionListener(e -> abrir(new VentanaCategorias()));            // [I5] Eddy
+            mCategorias.add(itCategorias);
 
             JMenu mReportes = new JMenu("Reportes");
             JMenuItem itReportes = new JMenuItem("Ver reportes");
-            itReportes.addActionListener(e -> enDesarrollo("Reportes", "Integrante 5"));     // [I5]
+            itReportes.addActionListener(e -> abrir(new VentanaReportes()));                // [I5] Eddy
             mReportes.add(itReportes);
 
             barra.add(mUsuarios);
-            barra.add(mMaestros);
+            barra.add(mCategorias);
             barra.add(mReportes);
         }
 
+        // --- Sesion: cerrar sesion (volver al login) o salir; para ambos roles ---
+        JMenu mSesion = new JMenu("Sesion");
+        JMenuItem itCerrar = new JMenuItem("Cerrar sesion");
+        itCerrar.addActionListener(e -> cerrarSesion());                                // [I1] Ray
+        JMenuItem itSalir = new JMenuItem("Salir");
+        itSalir.addActionListener(e -> System.exit(0));
+        mSesion.add(itCerrar);
+        mSesion.add(itSalir);
+        barra.add(mSesion);
+
         return barra;
+    }
+
+    /** Cierra la sesion actual y regresa a la ventana de acceso. */
+    private void cerrarSesion() {
+        int r = JOptionPane.showConfirmDialog(this,
+                "Deseas cerrar la sesion actual?", "Cerrar sesion",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (r == JOptionPane.YES_OPTION) {
+            dispose();
+            new VentanaLogin().setVisible(true);
+        }
     }
 
     /**
@@ -102,19 +128,12 @@ public class VentanaPrincipal extends JFrame {
     private void traerAlFrente(JInternalFrame ventana) {
         try {
             if (ventana.isIcon()) {
-                ventana.setIcon(false);   // restaura la ventana si estaba minimizada
+                ventana.setIcon(false);
             }
             ventana.setSelected(true);
         } catch (PropertyVetoException ex) {
-            // sin accion: si el frame rechaza la operacion, lo dejamos como esta
+            // sin accion
         }
         ventana.toFront();
-    }
-
-    /** Aviso temporal para los modulos que aun no han sido entregados. */
-    private void enDesarrollo(String modulo, String integrante) {
-        JOptionPane.showMessageDialog(this,
-                "El modulo de " + modulo + " esta en desarrollo (" + integrante + ").",
-                "Modulo en desarrollo", JOptionPane.INFORMATION_MESSAGE);
     }
 }
