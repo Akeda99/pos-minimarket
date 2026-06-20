@@ -100,12 +100,13 @@ public class VentanaLogin extends JFrame {
     }
 
     private void abrirSistema(Usuario usuario) {
-        VentanaPrincipal principal = new VentanaPrincipal(usuario.getRol());
+        VentanaPrincipal principal = new VentanaPrincipal(usuario);
         principal.setVisible(true);
         this.dispose();
     }
 
-    /** Permite probar el login de forma aislada, sin pasar por Main. */
+    /** Permite probar el login de forma aislada, sin pasar por Main.
+     * @param args */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new VentanaLogin().setVisible(true));
     }
