@@ -44,10 +44,25 @@ public class VentanaInventario extends JInternalFrame {
 
     // ── Constructor ────────────────────────────────────────────────────────
     public VentanaInventario() {
-        super("Gestión de Inventario", true, true, true, true);
+        this(false);
+    }
+
+    /**
+     * @param soloLectura si es true, oculta los botones Nuevo/Editar/Eliminar
+     *        y muestra el inventario en modo consulta (por ejemplo, para el
+     *        rol CAJERO, que puede ver pero no modificar).
+     */
+    public VentanaInventario(boolean soloLectura) {
+        super(soloLectura ? "Consulta de Inventario" : "Gestión de Inventario",
+              true, true, true, true);
         setSize(820, 480);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         inicializarUI();
+        if (soloLectura) {
+            btnNuevo.setVisible(false);
+            btnEditar.setVisible(false);
+            btnEliminar.setVisible(false);
+        }
         cargarTabla(null);
     }
 
