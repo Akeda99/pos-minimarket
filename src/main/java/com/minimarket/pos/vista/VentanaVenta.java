@@ -31,7 +31,7 @@ public class VentanaVenta extends JInternalFrame {
 
     public VentanaVenta() {
         super("Registrar Venta", true, true, true, true);
-        setSize(750, 520);
+        setSize(900, 520);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         setLayout(new BorderLayout(8, 8));
         iniciarNuevaVenta();
@@ -210,9 +210,17 @@ public class VentanaVenta extends JInternalFrame {
 
         try {
             ventaDAO.insertar(ventaActual);
+            double total      = ventaActual.getTotal();
+            double valorVenta = Math.round(total / 1.18 * 100.0) / 100.0;
+            double igv        = Math.round((total - valorVenta) * 100.0) / 100.0;
             JOptionPane.showMessageDialog(this,
-                    "Venta #" + ventaActual.getIdVenta() + " registrada correctamente.\n"
-                    + "Total cobrado: S/ " + String.format("%.2f", ventaActual.getTotal()),
+                    "Venta #" + ventaActual.getIdVenta() + " registrada correctamente.\n\n"
+                    + "----------- COMPROBANTE -----------\n"
+                    + "Valor de venta:   S/ " + String.format("%.2f", valorVenta) + "\n"
+                    + "IGV (18%):        S/ " + String.format("%.2f", igv) + "\n"
+                    + "-----------------------------------\n"
+                    + "TOTAL:            S/ " + String.format("%.2f", total) + "\n"
+                    + "Metodo de pago:   " + ventaActual.getMetodoPago(),
                     "Venta exitosa", JOptionPane.INFORMATION_MESSAGE);
             nuevaVenta();
         } catch (POSException ex) {
