@@ -18,7 +18,7 @@ import java.util.List;
  * Usa siempre ConexionBD.getConexion(), como acordamos en los contratos del equipo.
  * Responsable: Integrante 3.
  */
-public class UsuarioDAOImpl implements UsuarioDAO {
+public class UsuarioDAOImpl implements DAO<Usuario> {
 
     @Override
     public void insertar(Usuario usuario) throws POSException {
@@ -91,7 +91,6 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         return usuarios;
     }
 
-    @Override
     public Usuario autenticar(String username, String password) throws POSException {
         String sql = "SELECT * FROM USUARIO WHERE username = ? AND password = ?";
         String passwordHash = hashear(password);
@@ -109,7 +108,6 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         return null; // credenciales incorrectas
     }
 
-    @Override
     public boolean existeUsername(String username) throws POSException {
         String sql = "SELECT 1 FROM USUARIO WHERE username = ?";
         try (PreparedStatement ps = ConexionBD.getConexion().prepareStatement(sql)) {

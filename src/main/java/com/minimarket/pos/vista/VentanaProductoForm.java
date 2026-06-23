@@ -1,6 +1,5 @@
 package com.minimarket.pos.vista;
 
-import com.minimarket.pos.dao.ProductoDAO;
 import com.minimarket.pos.dao.ProductoDAOImpl;
 import com.minimarket.pos.modelo.Producto;
 import com.minimarket.pos.modelo.ProductoEmpaquetado;
@@ -28,7 +27,7 @@ import java.time.format.DateTimeParseException;
  */
 public class VentanaProductoForm extends JDialog {
 
-    private final ProductoDAO dao = new ProductoDAOImpl();
+    private final ProductoDAOImpl dao = new ProductoDAOImpl();
     private final Producto productoEditar;   // null = nuevo
     private boolean guardado = false;
 

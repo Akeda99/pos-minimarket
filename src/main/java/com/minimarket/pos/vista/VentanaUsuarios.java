@@ -1,6 +1,5 @@
 package com.minimarket.pos.vista;
 
-import com.minimarket.pos.dao.UsuarioDAO;
 import com.minimarket.pos.dao.UsuarioDAOImpl;
 import com.minimarket.pos.modelo.Administrador;
 import com.minimarket.pos.modelo.Cajero;
@@ -34,7 +33,7 @@ import java.util.List;
  */
 public class VentanaUsuarios extends JInternalFrame {
 
-    private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+    private final UsuarioDAOImpl usuarioDAO = new UsuarioDAOImpl();
 
     private final DefaultTableModel modeloTabla =
             new DefaultTableModel(new Object[]{"ID", "Usuario", "Nombre", "Rol"}, 0) {

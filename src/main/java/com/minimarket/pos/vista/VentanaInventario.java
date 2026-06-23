@@ -1,6 +1,5 @@
 package com.minimarket.pos.vista;
 
-import com.minimarket.pos.dao.ProductoDAO;
 import com.minimarket.pos.dao.ProductoDAOImpl;
 import com.minimarket.pos.modelo.Producto;
 import com.minimarket.pos.util.POSException;
@@ -24,7 +23,7 @@ import java.util.List;
 public class VentanaInventario extends JInternalFrame {
 
     // ── DAO ────────────────────────────────────────────────────────────────
-    private final ProductoDAO dao = new ProductoDAOImpl();
+    private final ProductoDAOImpl dao = new ProductoDAOImpl();
 
     // ── Componentes UI ─────────────────────────────────────────────────────
     private JTable          tabla;

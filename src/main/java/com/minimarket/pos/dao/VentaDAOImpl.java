@@ -10,7 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VentaDAOImpl implements VentaDAO {
+public class VentaDAOImpl implements DAO<Venta> {
 
     private static final String SQL_BASE = "SELECT * FROM VENTA ";
     private static final String SQL_BUSCAR_ID = SQL_BASE + "WHERE id_venta = ?";
@@ -108,7 +108,6 @@ public class VentaDAOImpl implements VentaDAO {
         return lista;
     }
 
-    @Override
     public List<Venta> listarPorUsuario(int idUsuario) throws POSException {
         List<Venta> lista = new ArrayList<>();
         try (PreparedStatement ps = ConexionBD.getConexion().prepareStatement(SQL_POR_USUARIO)) {
@@ -122,7 +121,6 @@ public class VentaDAOImpl implements VentaDAO {
         return lista;
     }
 
-    @Override
     public List<Venta> listarPorFecha(String fechaInicio, String fechaFin) throws POSException {
         List<Venta> lista = new ArrayList<>();
         try (PreparedStatement ps = ConexionBD.getConexion().prepareStatement(SQL_POR_FECHA)) {

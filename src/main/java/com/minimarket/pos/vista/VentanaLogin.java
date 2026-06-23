@@ -1,6 +1,5 @@
 package com.minimarket.pos.vista;
 
-import com.minimarket.pos.dao.UsuarioDAO;
 import com.minimarket.pos.dao.UsuarioDAOImpl;
 import com.minimarket.pos.modelo.Usuario;
 import com.minimarket.pos.util.POSException;
@@ -31,7 +30,7 @@ public class VentanaLogin extends JFrame {
 
     private final JTextField txtUsuario = new JTextField(15);
     private final JPasswordField txtPassword = new JPasswordField(15);
-    private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+    private final UsuarioDAOImpl usuarioDAO = new UsuarioDAOImpl();
 
     public VentanaLogin() {
         setTitle("Sistema POS Minimarket - Iniciar sesion");
@@ -105,8 +104,7 @@ public class VentanaLogin extends JFrame {
         this.dispose();
     }
 
-    /** Permite probar el login de forma aislada, sin pasar por Main.
-     * @param args */
+    /** Permite probar el login de forma aislada, sin pasar por Main. */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new VentanaLogin().setVisible(true));
     }

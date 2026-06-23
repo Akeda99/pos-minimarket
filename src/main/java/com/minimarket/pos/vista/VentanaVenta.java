@@ -1,6 +1,5 @@
 package com.minimarket.pos.vista;
 
-import com.minimarket.pos.dao.ProductoDAO;
 import com.minimarket.pos.dao.ProductoDAOImpl;
 import com.minimarket.pos.dao.VentaDAOImpl;
 import com.minimarket.pos.modelo.DetalleVenta;
@@ -15,7 +14,7 @@ import java.awt.*;
 
 public class VentanaVenta extends JInternalFrame {
 
-    private final ProductoDAO productoDAO = new ProductoDAOImpl();
+    private final ProductoDAOImpl productoDAO = new ProductoDAOImpl();
     private final VentaDAOImpl ventaDAO   = new VentaDAOImpl();
 
     private JTextField txtCodigo, txtNombre, txtPrecio, txtCantidad;

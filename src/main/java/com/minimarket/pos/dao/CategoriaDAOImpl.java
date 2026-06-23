@@ -12,7 +12,7 @@ import java.util.List;
  * Implementacion JDBC del DAO de categorias (tabla CATEGORIA).
  * Modulo de Categorias - Integrante 5.
  */
-public class CategoriaDAOImpl implements CategoriaDAO {
+public class CategoriaDAOImpl implements DAO<Categoria> {
 
     @Override
     public void insertar(Categoria c) throws POSException {

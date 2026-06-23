@@ -1,6 +1,5 @@
 package com.minimarket.pos.vista;
 
-import com.minimarket.pos.dao.CategoriaDAO;
 import com.minimarket.pos.dao.CategoriaDAOImpl;
 import com.minimarket.pos.modelo.Categoria;
 import com.minimarket.pos.util.POSException;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public class VentanaCategorias extends JInternalFrame {
 
-    private final CategoriaDAO dao = new CategoriaDAOImpl();
+    private final CategoriaDAOImpl dao = new CategoriaDAOImpl();
 
     private JTable tabla;
     private DefaultTableModel modelo;

@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Integrante 2 (ajustado al esquema del equipo)
  */
-public class ProductoDAOImpl implements ProductoDAO {
+public class ProductoDAOImpl implements DAO<Producto> {
 
     // Valores de la columna tipo_producto
     private static final String T_PERECIBLE   = "PERECIBLE";
@@ -139,7 +139,6 @@ public class ProductoDAOImpl implements ProductoDAO {
     }
 
     // ── Búsqueda por código de barras ──────────────────────────────────────
-    @Override
     public Producto buscarPorCodigoBarras(String codigoBarras) throws POSException {
         try (Connection cn = ConexionBD.getConexion();
              PreparedStatement ps = cn.prepareStatement(SQL_POR_CODIGO)) {
@@ -156,7 +155,6 @@ public class ProductoDAOImpl implements ProductoDAO {
     }
 
     // ── Búsqueda por nombre ────────────────────────────────────────────────
-    @Override
     public List<Producto> buscarPorNombre(String nombre) throws POSException {
         List<Producto> lista = new ArrayList<>();
         try (Connection cn = ConexionBD.getConexion();
@@ -174,7 +172,6 @@ public class ProductoDAOImpl implements ProductoDAO {
     }
 
     // ── Listar por categoría ───────────────────────────────────────────────
-    @Override
     public List<Producto> listarPorCategoria(int idCategoria) throws POSException {
         List<Producto> lista = new ArrayList<>();
         try (Connection cn = ConexionBD.getConexion();
@@ -192,7 +189,6 @@ public class ProductoDAOImpl implements ProductoDAO {
     }
 
     // ── Stock bajo ─────────────────────────────────────────────────────────
-    @Override
     public List<Producto> listarStockBajo(int stockMinimo) throws POSException {
         List<Producto> lista = new ArrayList<>();
         try (Connection cn = ConexionBD.getConexion();
