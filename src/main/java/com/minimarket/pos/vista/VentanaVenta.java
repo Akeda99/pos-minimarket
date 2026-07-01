@@ -30,7 +30,7 @@ public class VentanaVenta extends JInternalFrame {
 
     public VentanaVenta() {
         super("Registrar Venta", true, true, true, true);
-        setSize(900, 520);
+        setSize(1100, 520);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         setLayout(new BorderLayout(8, 8));
         iniciarNuevaVenta();
@@ -52,7 +52,8 @@ public class VentanaVenta extends JInternalFrame {
         txtPrecio   = new JTextField(7);  txtPrecio.setEditable(false);
         txtCantidad = new JTextField(4);  txtCantidad.setText("1");
         btnAgregar  = new JButton("Agregar");
-        JButton btnBuscarNombre = new JButton("Buscar x nombre");
+        JButton btnBuscarNombre = new JButton("Buscar por nombre");
+        JButton btnVario = new JButton("Agregar Producto vario");
 
         p.add(new JLabel("Codigo barras:")); p.add(txtCodigo);
         p.add(btnBuscarNombre);
@@ -60,10 +61,12 @@ public class VentanaVenta extends JInternalFrame {
         p.add(new JLabel("Precio S/:"));     p.add(txtPrecio);
         p.add(new JLabel("Cant.:"));         p.add(txtCantidad);
         p.add(btnAgregar);
+        p.add(btnVario);
 
         txtCodigo.addActionListener(e -> buscarProducto());
         btnBuscarNombre.addActionListener(e -> buscarPorNombre());
         btnAgregar.addActionListener(e -> agregarAlCarrito());
+        btnVario.addActionListener(e -> agregarProductoVario());
 
         return p;
     }
@@ -83,7 +86,11 @@ public class VentanaVenta extends JInternalFrame {
 
         btnQuitar = new JButton("Quitar seleccionado");
         btnQuitar.addActionListener(e -> quitarItem());
-        p.add(btnQuitar, BorderLayout.SOUTH);
+        // El boton va dentro de un panel para que conserve su tamano normal
+        // y no se estire a todo el ancho (observacion del docente).
+        JPanel panelQuitar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelQuitar.add(btnQuitar);
+        p.add(panelQuitar, BorderLayout.SOUTH);
 
         return p;
     }
@@ -170,6 +177,23 @@ public class VentanaVenta extends JInternalFrame {
             int cantidad = Integer.parseInt(txtCantidad.getText().trim());
             if (cantidad <= 0) throw new NumberFormatException();
 
+            // Validar que no se pida mas de lo que hay en stock,
+            // considerando lo que ya se agrego de ese producto (observacion del docente).
+            int yaEnCarrito = 0;
+            for (DetalleVenta d : ventaActual.getDetalles()) {
+                if (d.getIdProducto() == productoSeleccionado.getId()) {
+                    yaEnCarrito += d.getCantidad();
+                }
+            }
+            if (cantidad + yaEnCarrito > productoSeleccionado.getStock()) {
+                JOptionPane.showMessageDialog(this,
+                        "Stock insuficiente para \"" + productoSeleccionado.getNombre() + "\".\n"
+                        + "Disponible: " + productoSeleccionado.getStock()
+                        + (yaEnCarrito > 0 ? "   |   Ya en el carrito: " + yaEnCarrito : ""),
+                        "Stock insuficiente", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             ventaActual.agregarDetalle(new DetalleVenta(
                     productoSeleccionado.getId(),
                     productoSeleccionado.getNombre(),
@@ -186,6 +210,58 @@ public class VentanaVenta extends JInternalFrame {
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Cantidad debe ser un numero entero mayor a 0.");
+        }
+    }
+
+    /**
+     * Agrega un producto NO registrado a la venta ("venta abierta"): el cajero
+     * escribe el nombre y el precio a mano. Para no romper el control de
+     * inventario, la linea se apoya en un producto generico de la base de datos
+     * (codigo de barras "0000"), que no controla stock. Asi se puede cobrar algo
+     * que aun no esta en el catalogo, sin que el cajero tenga que crear productos.
+     */
+    private void agregarProductoVario() {
+        try {
+            Producto generico = productoDAO.buscarPorCodigoBarras("0000");
+            if (generico == null) {
+                JOptionPane.showMessageDialog(this,
+                    "No esta configurado el producto generico (codigo 0000).\n"
+                    + "El administrador debe crearlo una sola vez para habilitar esta opcion.",
+                    "Funcion no disponible", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            String nombre = JOptionPane.showInputDialog(this,
+                    "Nombre del producto no registrado:");
+            if (nombre == null || nombre.trim().isEmpty()) return;
+
+            String sPrecio = JOptionPane.showInputDialog(this, "Precio unitario (S/):");
+            if (sPrecio == null) return;
+            double precio;
+            try {
+                precio = Double.parseDouble(sPrecio.trim());
+                if (precio <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "El precio debe ser un numero mayor a 0.");
+                return;
+            }
+
+            String sCant = JOptionPane.showInputDialog(this, "Cantidad:", "1");
+            if (sCant == null) return;
+            int cantidad;
+            try {
+                cantidad = Integer.parseInt(sCant.trim());
+                if (cantidad <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "La cantidad debe ser un numero entero mayor a 0.");
+                return;
+            }
+
+            ventaActual.agregarDetalle(new DetalleVenta(
+                    generico.getId(), nombre.trim(), cantidad, precio));
+            refrescarTabla();
+        } catch (POSException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
