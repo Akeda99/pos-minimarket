@@ -62,8 +62,9 @@ public class VentanaUsuarios extends JInternalFrame {
         JPanel panelPrincipal = new JPanel(new BorderLayout(8, 8));
 
         tabla.getSelectionModel().addListSelectionListener(e -> cargarSeleccionEnFormulario());
+        // Las opciones (formulario) van arriba y la tabla abajo (observacion del docente)
+        panelPrincipal.add(crearFormulario(), BorderLayout.NORTH);
         panelPrincipal.add(new JScrollPane(tabla), BorderLayout.CENTER);
-        panelPrincipal.add(crearFormulario(), BorderLayout.SOUTH);
 
         return panelPrincipal;
     }
