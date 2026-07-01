@@ -21,7 +21,7 @@ public class VentanaPrincipal extends JFrame {
     public VentanaPrincipal(Usuario usuario) {
         this.usuario = usuario;
         setTitle("Sistema POS Minimarket - " + usuario.getNombre() + " [" + usuario.getRol() + "]");
-        setSize(1000, 650);
+        setSize(1200, 650);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setContentPane(desktop);
