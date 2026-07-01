@@ -1,7 +1,9 @@
 package com.minimarket.pos.vista;
 
 import com.minimarket.pos.dao.ProductoDAOImpl;
+import com.minimarket.pos.dao.CategoriaDAOImpl;
 import com.minimarket.pos.modelo.Producto;
+import com.minimarket.pos.modelo.Categoria;
 import com.minimarket.pos.modelo.ProductoEmpaquetado;
 import com.minimarket.pos.modelo.ProductoPerecible;
 import com.minimarket.pos.modelo.ProductoPorPeso;
@@ -20,14 +22,15 @@ import java.time.format.DateTimeParseException;
  * Tras cerrar, VentanaInventario consulta isGuardado() para saber si debe
  * recargar la tabla.
  *
- * Nota: la categoría se ingresa por su ID. Cuando el Integrante 5 tenga listo
- * su CategoriaDAO, este campo puede cambiarse por un JComboBox de categorías.
+ * La categoría se elige desde un JComboBox que se carga con las categorías
+ * registradas en la base de datos (módulo del Integrante 5).
  *
  * @author Equipo POS Minimarket (módulo Inventario)
  */
 public class VentanaProductoForm extends JDialog {
 
     private final ProductoDAOImpl dao = new ProductoDAOImpl();
+    private final CategoriaDAOImpl categoriaDAO = new CategoriaDAOImpl();
     private final Producto productoEditar;   // null = nuevo
     private boolean guardado = false;
 
@@ -45,7 +48,7 @@ public class VentanaProductoForm extends JDialog {
     private JTextField txtStock;
     private JLabel     lblFecha;
     private JTextField txtFecha;     // yyyy-MM-dd
-    private JTextField txtCategoria; // id_categoria
+    private JComboBox<Categoria> cmbCategoria;
 
     public VentanaProductoForm(JFrame parent, Producto producto) {
         super(parent, producto == null ? "Nuevo producto" : "Editar producto", true);
@@ -91,9 +94,10 @@ public class VentanaProductoForm extends JDialog {
         txtFecha = new JTextField(15);
         campos.add(txtFecha);
 
-        campos.add(new JLabel("ID Categoría:"));
-        txtCategoria = new JTextField(15);
-        campos.add(txtCategoria);
+        campos.add(new JLabel("Categoría:"));
+        cmbCategoria = new JComboBox<>();
+        cargarCategorias();
+        campos.add(cmbCategoria);
 
         // El campo fecha y la etiqueta de precio dependen del tipo
         cmbTipo.addActionListener(e -> actualizarCamposSegunTipo());
@@ -132,12 +136,34 @@ public class VentanaProductoForm extends JDialog {
         cmbTipo.setSelectedItem(p.getTipo());
         txtPrecio.setText(String.valueOf(p.getPrecioBase()));
         txtStock.setText(String.valueOf(p.getStock()));
-        txtCategoria.setText(String.valueOf(p.getIdCategoria()));
+        seleccionarCategoria(p.getIdCategoria());
         if (p instanceof ProductoPerecible) {
             LocalDate fv = ((ProductoPerecible) p).getFechaVencimiento();
             if (fv != null) txtFecha.setText(fv.toString());
         }
         actualizarCamposSegunTipo();
+    }
+
+    /** Carga en el combo todas las categorías registradas en la base de datos. */
+    private void cargarCategorias() {
+        try {
+            cmbCategoria.removeAllItems();
+            for (Categoria c : categoriaDAO.listar()) {
+                cmbCategoria.addItem(c);
+            }
+        } catch (POSException ex) {
+            error("No se pudieron cargar las categorías: " + ex.getMessage());
+        }
+    }
+
+    /** Deja seleccionada en el combo la categoría cuyo id coincide (modo edición). */
+    private void seleccionarCategoria(int idCategoria) {
+        for (int i = 0; i < cmbCategoria.getItemCount(); i++) {
+            if (cmbCategoria.getItemAt(i).getIdCategoria() == idCategoria) {
+                cmbCategoria.setSelectedIndex(i);
+                return;
+            }
+        }
     }
 
     // ── Guardar ──────────────────────────────────────────────────────────────
@@ -151,19 +177,25 @@ public class VentanaProductoForm extends JDialog {
         }
 
         double precio;
-        int stock, idCategoria;
+        int stock;
         try {
             precio = Double.parseDouble(txtPrecio.getText().trim());
             stock  = Integer.parseInt(txtStock.getText().trim());
-            idCategoria = Integer.parseInt(txtCategoria.getText().trim());
         } catch (NumberFormatException ex) {
-            error("Precio, stock e ID de categoría deben ser numéricos.");
+            error("El precio y el stock deben ser numéricos.");
             return;
         }
         if (precio < 0 || stock < 0) {
             error("El precio y el stock no pueden ser negativos.");
             return;
         }
+
+        Categoria catSel = (Categoria) cmbCategoria.getSelectedItem();
+        if (catSel == null) {
+            error("Debe seleccionar una categoría. Si no hay ninguna, créela primero en el módulo de Categorías.");
+            return;
+        }
+        int idCategoria = catSel.getIdCategoria();
 
         int id = (productoEditar == null) ? 0 : productoEditar.getId();
         String tipo = (String) cmbTipo.getSelectedItem();

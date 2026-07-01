@@ -52,7 +52,7 @@ public class VentanaInventario extends JInternalFrame {
      *        rol CAJERO, que puede ver pero no modificar).
      */
     public VentanaInventario(boolean soloLectura) {
-        super(soloLectura ? "Consulta de Inventario" : "Gestión de Inventario",
+        super(soloLectura ? "Consulta de Productos" : "Gestión de Productos",
               true, true, true, true);
         setSize(820, 480);
         setDefaultCloseOperation(HIDE_ON_CLOSE);
